@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Generate QR Code</title>
+      <script src="./scripts/qrcode.min.js" type="text/javascript"></script>
+      <script src="../jquery/1.11.3/jquery.min.js"></script>
+
+      <script>
+         let g_QRCode = null;
+         window.onload = window_onload;
+
+         //#############################################################################################################################
+         //Description : * add event listeners
+         //-----------------------------------------------------------------------------------------------------------------------------
+         function window_onload()
+         {
+            regEvents();
+            init();
+         }
+
+         //#############################################################################################################################
+         //Description : * initialize URL and QRCode engine
+         //-----------------------------------------------------------------------------------------------------------------------------
+         function init()
+         {
+            //get divQRCode div
+            const eQRCode = document.getElementById("divQRCode");
+
+            //create divQRCode configuration
+            const config = {
+               width: 400,
+               height: 400
+            };
+
+            //create a divQRCode object
+            g_QRCode = new QRCode(
+               eQRCode,
+               config
+            );
+
+            //pure Javascript syntax
+            //document.getElementById("txtUrl").value = "https://giupbedentruong.org";
+
+            //jquery syntax
+            $("#txtUrl").val("https://giupbedentruong.org");
+
+            //document.getElementById("txtUrl").focus();
+            $("#txtUrl").focus();
+         }
+
+         //#############################################################################################################################
+         //Description : * generate QR code
+         //-----------------------------------------------------------------------------------------------------------------------------
+         function makeCode()
+         {
+            if(g_QRCode === null) {
+               return;
+            }
+
+            const sUrl = $("#txtUrl").val();
+            if(sUrl === undefined || sUrl === "") {
+               alert("Please enter a valid url");
+               $("#txtUrl").focus();
+               return;
+            }
+
+            g_QRCode.makeCode(sUrl);
+         }
+
+         //#############################################################################################################################
+         //Description : * add event listeners
+         //-----------------------------------------------------------------------------------------------------------------------------
+         function regEvents()
+         {
+            //pure Javascript syntax
+            // document.getElementById("txtUrl").addEventListener("keydown", function(e) {
+            //    if(e.keyCode == 13) {
+            //       e.preventDefault();
+            //       makeCode();
+            //    }
+            // });
+
+            //jquery syntax
+            $("#txtUrl").on("keydown", function(e) {
+               if(e.keyCode == 13) {
+                  e.preventDefault();
+                  makeCode();
+               }
+            });
+         }
+      </script>
+   </head>
+   <body>
+      <input id="txtUrl" type="text" style="width: 700px;">
+      <br/><div id="divQRCode" style="width:400px; height:400px;"></div>
+   </body>
+</html>
