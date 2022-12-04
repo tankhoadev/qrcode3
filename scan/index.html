@@ -2,8 +2,94 @@
 <html>
    <head>
       <title>Scan QR Code</title>
+      <script src="../jquery/1.11.3/jquery.min.js"></script>
+      <script src="./scripts/html5-qrcode.min.js"></script>
+
+      <script>
+         let g_camera, g_qrreader;
+         window.onload = window_onload;
+
+         function window_onload()
+         {
+            getCameras()
+         }
+
+         function getCameras()
+         {
+            Html5Qrcode.getCameras()
+               .then((devices) => {
+                  if(devices && devices.length) {
+                     g_camera = devices[0];
+                     $("#txtCamera").val(g_camera.label);
+
+                     g_qrreader = new Html5Qrcode("divQRReader");
+
+                     start();
+                  }
+               })
+               .catch(err => {
+                  console.log(err);
+               });
+         }
+
+         function qrcodeSuccessCallback(decodedText, results)
+         {
+            $("#txtUrl").val(decodedText);
+            g_qrreader.pause(true);
+
+            window.open(decodedText, null);
+            
+            $("#btnStart").show();
+         }
+         
+         function qrcodeErrorCallback()
+         {
+
+         }
+
+         function start()
+         {
+            $("#txtUrl").val("");
+            $("#btnStart").hide();
+
+            const config = {
+               fps: 10,
+               qrbox: { width: 550, height: 550 }
+            };
+            
+            g_qrreader.start(
+               { deviceId: { exact: g_camera.id } },
+               config,
+               qrcodeSuccessCallback,
+               qrcodeErrorCallback
+            );
+         }
+
+         function stop(callback)
+         {
+            g_qrreader.stop()
+               .then((ignore) => {
+                  callback(undefined, "OK");
+               })
+               .catch(err => {
+                  callback(err, undefined);
+               });
+         }
+
+         function btnStart_OnClick()
+         {
+            stop((err, results) => {
+               if(err) return console.log(err);
+
+               start();
+            });
+         }
+      </script>
    </head>
    <body>
-      Generate QR Code
+      <div id="divQRReader" style="width:750px;"></div>
+      <input id="txtCamera" style="width:300px;"/>
+      <br/><input id="txtUrl" style="width:500px;"/>
+      <br/><input id="btnStart" type="button" value="Start" style="display:none;" onclick="btnStart_OnClick()"/>
    </body>
 </html>

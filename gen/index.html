@@ -39,10 +39,10 @@
             );
 
             //pure Javascript syntax
-            //document.getElementById("txtUrl").value = "https://giupbedentruong.org";
+            //document.getElementById("txtUrl").value = "https://giupbedentruong.org?param1=qrcode&param2=test&param3=test3";
 
             //jquery syntax
-            $("#txtUrl").val("https://giupbedentruong.org");
+            $("#txtUrl").val("http://localhost:5000/scan/parse.html?param1=qrcode&param2=test&param3=test3");
 
             //document.getElementById("txtUrl").focus();
             $("#txtUrl").focus();
@@ -78,6 +78,16 @@
             //       e.preventDefault();
             //       makeCode();
             //    }
+            // });
+
+            $("#txtUrl").on("change", function(e) {
+               e.preventDefault();
+               makeCode();
+            });
+
+            // $("#txtUrl").on("blur", function(e) {
+            //    e.preventDefault();
+            //    makeCode();
             // });
 
             //jquery syntax

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Scan QR Code</title>
+      <script src="../jquery/1.11.3/jquery.min.js"></script>
+
+      <script>
+         window.onload = window_onload;
+
+         function window_onload()
+         {
+            $("#txtUrl").val(document.location.href);
+
+            const params = getQueryParams($("#txtUrl").val());
+
+            for(var i = 0; i<params.length; i++)
+            {
+               $("#txtParam" + (i+1)).val(params[i].key + "=" + params[i].val);
+            }
+         }
+
+         function getQueryParams(sUrl)
+         {
+            const paramArr = sUrl.slice(sUrl.indexOf('?') + 1).split('&');
+            const params = [];
+
+            paramArr.map(param => {
+               const [key, val] = param.split("=");
+
+               params.push({
+                  key,
+                  val
+               })
+            });
+
+            return params;
+         }
+
+      </script>
+   </head>
+   <body>
+      <input id="txtUrl" style="width:500px;"/>
+      <br/><input id="txtParam1" style="width:500px;"/>
+      <br/><input id="txtParam2" style="width:500px;"/>
+      <br/><input id="txtParam3" style="width:500px;"/>
+      <br/><input id="txtParam4" style="width:500px;"/>
+   </body>
+</html>
