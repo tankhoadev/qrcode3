@@ -65,8 +65,8 @@
          {
             $("#divCust").html("");
 
-            var sHtml = `<table border='1'>
-               <tr><td>Customer: </td><td colspan='3'>${cust.username}</td></tr>`;               
+            var sHtml = `<table style='width:100%;' border='1'>
+               <tr><td>Username: </td><td colspan='3'>${cust.username}</td></tr>`;               
 
             for(var i=0; i<cust.products.length; i++)
             {
@@ -129,7 +129,8 @@
             <td><input id="txtUrl" style="width:800px;"/></td>
          </tr>
          <tr>
-            <td colspan="2"><div id="divCust"></div></td>
+            <td>Customer products</td>
+            <td><div id="divCust"></div></td>
          </tr>
       </table>      
    </body>
