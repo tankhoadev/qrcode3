@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Scan QR Code</title>
+      <script src="../jquery/1.11.3/jquery.min.js"></script>
+
+      <script>
+         const g_existCusts = [
+            {
+               username: "tankhoa.dev@viscor.com",
+               products:
+                  [
+                     { prod_no: "erctb", prod_id: 2 },
+                     { prod_no: "ind", prod_id: 3 }
+                  ]
+            }
+         ];
+
+         window.onload = window_onload;
+
+         //#############################################################################################################################
+         //Description : * 
+         //-----------------------------------------------------------------------------------------------------------------------------
+         function window_onload()
+         {
+            $("#divCust").html("");
+            $("#txtUrl").val(document.location.href);
+
+            const paramObj = getQueryParams($("#txtUrl").val());
+
+            if(paramObj.hasOwnProperty("username"))
+               $("#txtusername").val(paramObj.username);
+
+            if(paramObj.hasOwnProperty("prod_no"))
+               $("#txtprod_no").val(paramObj.prod_no);
+
+            if(paramObj.hasOwnProperty("prod_id"))
+               $("#txtprod_id").val(paramObj.prod_id);
+
+            const cust = updateCustomers();
+            bindProducts(cust);
+         }
+
+         //#############################################################################################################################
+         //Description : * bind customer product list
+         //-----------------------------------------------------------------------------------------------------------------------------
+         function bindProducts(cust)
+         {
+            var sHtml = `<table border='1'>
+               <tr><td>Customer: </td><td colspan='3'>${cust.username}</td></tr>`;               
+
+            for(var i=0; i<cust.products.length; i++)
+            {
+               sHtml +=  `<tr>
+                            <td>prod_no: </td><td>${cust.products[i].prod_no}</td>
+                            <td>prod_id: </td><td>${cust.products[i].prod_id}</td>
+                          </tr>`;
+            }
+            sHtml += `</table>`;
+
+            $("#divCust").html(sHtml);
+         }
+
+         //#############################################################################################################################
+         //Description : * bind customer product list
+         //-----------------------------------------------------------------------------------------------------------------------------
+         function updateCustomers()
+         {
+            let cust = g_existCusts.find(e => e.username == $("#txtusername").val());
+
+            if(cust == null)
+            {
+               cust = {
+                  username: $("#txtusername").val(),
+                  products: []
+               }
+               g_existCusts.push(cust);
+            }
+
+            cust.products.push({
+                prod_no: $("#txtprod_no").val(), 
+                prod_id: $("#txtprod_id").val(), 
+            });
+
+            return cust;
+         }
+
+         //#############################################################################################################################
+         //Description : * parse page url 
+         //-----------------------------------------------------------------------------------------------------------------------------
+         function getQueryParams(sUrl)
+         {
+            const paramObj = {};            
+            
+            const paramArr = sUrl.slice(sUrl.indexOf('?') + 1).split('&');
+            paramArr.map(param => {
+               const [key, val] = param.split("=");
+               paramObj[key] = val;
+            });
+
+            return paramObj;
+         }
+
+      </script>
+   </head>
+   <body>
+      <table>
+         <tr>
+            <td>Url</td>
+            <td><input id="txtUrl" style="width:800px;"/></td>
+         </tr>
+         <tr>
+            <td>User Name</td>
+            <td><input id="txtusername" style="width:500px;"/></td>
+         </tr>
+         <tr>
+            <td>Product No</td>
+            <td><input id="txtprod_no" style="width:500px;"/></td>
+         </tr>
+         <tr>
+            <td>Product Id</td>
+            <td><input id="txtprod_id" style="width:500px;"/></td>
+         </tr>
+      </table>
+      <br/></br/>
+      <div id="divCust"></div>
+   </body>
+</html>
