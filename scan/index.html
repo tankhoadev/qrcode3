@@ -14,6 +14,7 @@
          //-----------------------------------------------------------------------------------------------------------------------------
          function window_onload()
          {
+            regEvents();
             getCameras()
          }
 
@@ -28,7 +29,7 @@
                      g_camera = devices[0];
                      $("#txtCamera").val(g_camera.label);
 
-                     g_qrreader = new Html5Qrcode("divQRReader");
+                     
 
                      start();
                   }
@@ -62,6 +63,32 @@
          //#############################################################################################################################
          //Description : * 
          //-----------------------------------------------------------------------------------------------------------------------------
+         function regEvents()
+         {
+            $("#filQRCode").on("change", function(e) {
+               if (e.target.files.length == 0) {
+                  // No file selected, ignore 
+                  return;
+               }
+
+               const imageFile = e.target.files[0];
+               const html5QrCode = new Html5Qrcode("divQRReader");
+
+               html5QrCode.scanFile(imageFile, true)
+                  .then(decodedText => {
+                     $("#txtUrl").val(decodedText);
+                  })
+                  .catch(err => {
+                     console.log(`Error scanning file. Reason: ${err}`)
+                  });
+
+               $("#btnStart").show();
+            });
+         }
+
+         //#############################################################################################################################
+         //Description : * 
+         //-----------------------------------------------------------------------------------------------------------------------------
          function start()
          {
             //reset elements
@@ -71,9 +98,11 @@
             //create configuration
             const config = {
                fps: 10,
-               qrbox: { width: 550, height: 550 }
+               qrbox: { width: 450, height: 450 }
             };
-            
+
+            g_qrreader = new Html5Qrcode("divQRReader");  
+
             //start QRCode reader
             g_qrreader.start(
                { deviceId: { exact: g_camera.id } },
@@ -81,6 +110,18 @@
                qrcodeSuccessCallback,
                qrcodeErrorCallback
             );
+         }
+
+         //#############################################################################################################################
+         //Description : * stop QRCode reader, if succeeds, restart
+         //-----------------------------------------------------------------------------------------------------------------------------
+         function btnStart_OnClick()
+         {
+            stop((err, results) => {
+               if(err) return console.log(err);
+
+               start();
+            });
          }
 
          //#############################################################################################################################
@@ -97,24 +138,31 @@
                   callback(err, undefined);
                });
          }
-
-         //#############################################################################################################################
-         //Description : * stop QRCode reader, if succeeds, restart
-         //-----------------------------------------------------------------------------------------------------------------------------
-         function btnStart_OnClick()
-         {
-            stop((err, results) => {
-               if(err) return console.log(err);
-
-               start();
-            });
-         }
       </script>
    </head>
    <body>
-      <div id="divQRReader" style="width:750px;"></div>
-      <input id="txtCamera" style="width:300px;"/>
-      <br/><input id="txtUrl" style="width:500px;"/>
-      <br/><input id="btnStart" type="button" value="Start" style="display:none;" onclick="btnStart_OnClick()"/>
+      <table>
+         <tr>
+            <td>Camera</td>
+            <td><input id="txtCamera" style="width:692px;"/></td>
+         </tr>
+         <tr>
+            <td>Scanner</td>
+            <td><div id="divQRReader" style="width:700px;"></div></td>
+         </tr>
+         <tr>
+            <td>QR Image</td>
+            <td><input type="file" id="filQRCode" accept="image/*"></td>
+         </tr>
+         <tr>
+            <td>Url</td>
+            <td><input id="txtUrl" style="width:692px;"/></td>
+         </tr>
+         <tr>
+            <td colspan="2" style="text-align:center;">
+               <input id="btnStart" type="button" value="Restart Scanner" style="display:none;" onclick="btnStart_OnClick()"/></td>
+         </tr>
+      </table>      
+      
    </body>
 </html>

@@ -3,6 +3,7 @@
    <head>
       <title>Scan QR Code</title>
       <script src="../jquery/1.11.3/jquery.min.js"></script>
+      <script src="./scripts/html5-qrcode.min.js"></script>
 
       <script>
          const g_existCusts = [
@@ -23,29 +24,47 @@
          //-----------------------------------------------------------------------------------------------------------------------------
          function window_onload()
          {
-            $("#divCust").html("");
+            regEvents();
+
             $("#txtUrl").val(document.location.href);
+            parseUrl();
+         }
 
-            const paramObj = getQueryParams($("#txtUrl").val());
+         //#############################################################################################################################
+         //Description : * 
+         //-----------------------------------------------------------------------------------------------------------------------------
+         function regEvents()
+         {
+            $("#txtUrl").on("change", function(e) { parseUrl(); });
 
-            if(paramObj.hasOwnProperty("username"))
-               $("#txtusername").val(paramObj.username);
-
-            if(paramObj.hasOwnProperty("prod_no"))
-               $("#txtprod_no").val(paramObj.prod_no);
-
-            if(paramObj.hasOwnProperty("prod_id"))
-               $("#txtprod_id").val(paramObj.prod_id);
-
-            const cust = updateCustomers();
-            bindProducts(cust);
+            $("#txtUrl").on("keydown", function(e) {
+               if(e.keyCode == 13) {
+                  parseUrl();
+               }               
+            });
          }
 
          //#############################################################################################################################
          //Description : * bind customer product list
          //-----------------------------------------------------------------------------------------------------------------------------
-         function bindProducts(cust)
+         function parseUrl()
          {
+            const paramObj = getQueryParams($("#txtUrl").val());
+
+            if(paramObj.hasOwnProperty("username") && paramObj.hasOwnProperty("prod_no") && paramObj.hasOwnProperty("prod_id"))
+            {
+               const cust = updateCustomers(paramObj);
+               bindCustomers(cust);
+            }            
+         }
+
+         //#############################################################################################################################
+         //Description : * bind customer product list
+         //-----------------------------------------------------------------------------------------------------------------------------
+         function bindCustomers(cust)
+         {
+            $("#divCust").html("");
+
             var sHtml = `<table border='1'>
                <tr><td>Customer: </td><td colspan='3'>${cust.username}</td></tr>`;               
 
@@ -64,22 +83,22 @@
          //#############################################################################################################################
          //Description : * bind customer product list
          //-----------------------------------------------------------------------------------------------------------------------------
-         function updateCustomers()
+         function updateCustomers(paramObj)
          {
-            let cust = g_existCusts.find(e => e.username == $("#txtusername").val());
+            let cust = g_existCusts.find(e => e.username == paramObj["username"]);
 
             if(cust == null)
             {
                cust = {
-                  username: $("#txtusername").val(),
+                  username: paramObj["username"],
                   products: []
                }
                g_existCusts.push(cust);
             }
 
             cust.products.push({
-                prod_no: $("#txtprod_no").val(), 
-                prod_id: $("#txtprod_id").val(), 
+                prod_no: paramObj["prod_no"], 
+                prod_id: paramObj["prod_id"], 
             });
 
             return cust;
@@ -110,19 +129,8 @@
             <td><input id="txtUrl" style="width:800px;"/></td>
          </tr>
          <tr>
-            <td>User Name</td>
-            <td><input id="txtusername" style="width:500px;"/></td>
+            <td colspan="2"><div id="divCust"></div></td>
          </tr>
-         <tr>
-            <td>Product No</td>
-            <td><input id="txtprod_no" style="width:500px;"/></td>
-         </tr>
-         <tr>
-            <td>Product Id</td>
-            <td><input id="txtprod_id" style="width:500px;"/></td>
-         </tr>
-      </table>
-      <br/></br/>
-      <div id="divCust"></div>
+      </table>      
    </body>
 </html>
