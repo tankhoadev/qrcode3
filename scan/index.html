@@ -27,9 +27,7 @@
                .then((devices) => {
                   if(devices && devices.length) {
                      g_camera = devices[0];
-                     $("#txtCamera").val(g_camera.label);
-
-                     
+                     $("#txtCamera").val(g_camera.label);                     
 
                      start();
                   }
