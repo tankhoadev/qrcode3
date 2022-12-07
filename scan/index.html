@@ -44,8 +44,6 @@
          {
             $("#txtUrl").val(decodedText);
             g_qrreader.pause(true);
-
-            window.open(decodedText, null);
             
             $("#btnStart").show();
          }
@@ -138,7 +136,7 @@
          }
       </script>
    </head>
-   <body>
+   <body style="width:100%;">
       <table>
          <tr>
             <td>Camera</td>
